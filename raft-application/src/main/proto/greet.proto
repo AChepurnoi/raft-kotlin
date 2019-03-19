@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "edu.ucu.proto";
+
+package helloworld;
+
+service ClusterNode {
+    rpc RequestVote (VoteRequest) returns (VoteResponse) {}
+    rpc AppendEntries (AppendRequest) returns (AppendResponse){}
+}
+
+
+message VoteRequest {
+    int64 term = 1;
+    int32 candidateID = 2;
+
+}
+
+message VoteResponse {
+    int64 term = 1;
+    bool voteGranted = 2;
+}
+
+message AppendRequest{
+    int64 term = 1;
+    int32 leaderId = 2;
+
+
+}
+
+message AppendResponse{
+    int64 term = 1;
+    bool success = 2;
+
+}
