@@ -1,5 +1,7 @@
 package edu.ucu
 
+import edu.ucu.proto.AppendRequest
+import edu.ucu.proto.VoteRequest
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.runBlocking
@@ -24,15 +26,17 @@ class State(val id: Int = Configuration.id) {
     }
 
     var term: Long = 0
-        private set
+        internal set
 
     var current: NodeState = NodeState.FOLLOWER
         private set
 
     var votedFor: Int? = null
 
+    var leaderId: Int? = null
 
-    suspend fun nextTerm(newTerm: Long){
+
+    suspend fun nextTerm(newTerm: Long) {
         this.term = newTerm
         this.votedFor = id
         updateState(NodeState.CANDIDATE)
@@ -43,39 +47,44 @@ class State(val id: Int = Configuration.id) {
         updateState(NodeState.LEADER)
     }
 
-    suspend fun tryVote(candidateId: Int, term: Long):Boolean{
-        return when {
-            this.term > term -> false
+    suspend fun tryVote(request: VoteRequest): Boolean {
 
-            this.term < term -> {
-                this.term = term
-                this.votedFor = candidateId
+        return when {
+            this.term > request.term -> false
+
+            this.term < request.term -> {
+                this.term = request.term
+                this.votedFor = request.candidateId
                 return true
             }
-            this.term == term -> {
-                if (this.votedFor == null) {
-                    this.votedFor = candidateId
+            this.term == request.term -> {
+                if (this.votedFor == null && current != NodeState.LEADER) {
+                    this.votedFor = request.candidateId
                 }
-                return votedFor == candidateId
+                return votedFor == request.candidateId
             }
             else -> {
-                logger.warn { "🤬 Voting failed. $candidateId - $term" }
+                logger.warn { "🤬 Voting failed: $request" }
                 return false
             }
         }
     }
 
-    suspend fun appendLeaderHeartbeat(leaderId: Int, term: Long): Boolean {
+    suspend fun appendLeaderHeartbeat(request: AppendRequest): Boolean {
         return when {
-            this.term <= term && leaderId != id -> {
-                this.term = term
+            this.term <= request.term && request.leaderId != id -> {
+                this.term = request.term
                 updateState(NodeState.FOLLOWER)
+                this.leaderId = request.leaderId
                 this.votedFor = null
                 return true
             }
-            this.term > term -> false
+            this.term > request.term -> false
 
-            leaderId == id -> true
+            request.leaderId == id -> {
+                this.leaderId = request.leaderId
+                true
+            }
 
             else -> {
                 logger.warn { "🤬 Can't handle leader message" }
@@ -85,7 +94,7 @@ class State(val id: Int = Configuration.id) {
     }
 
     override fun toString(): String {
-        return "State[id=$id, term=$term, current=$current, votedFor=$votedFor]"
+        return "State[id=$id, term=$term, current=$current, leaderId=$leaderId, votedFor=$votedFor]"
     }
 
 }

@@ -13,7 +13,7 @@ service ClusterNode {
 
 message VoteRequest {
     int64 term = 1;
-    int32 candidateID = 2;
+    int32 candidateId = 2;
 
 }
 
@@ -25,7 +25,6 @@ message VoteResponse {
 message AppendRequest{
     int64 term = 1;
     int32 leaderId = 2;
-
 
 }
 

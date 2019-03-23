@@ -19,7 +19,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
  */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.18.0)",
-    comments = "Source: greet.proto")
+    comments = "Source: raft.proto")
 public final class ClusterNodeGrpc {
 
   private ClusterNodeGrpc() {}
@@ -305,7 +305,7 @@ public final class ClusterNodeGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return edu.ucu.proto.Greet.getDescriptor();
+      return edu.ucu.proto.Raft.getDescriptor();
     }
 
     @java.lang.Override

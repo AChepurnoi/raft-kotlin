@@ -17,7 +17,7 @@ class ClusterNode(val host: String, val port: Int) {
     suspend fun requestVote(candidateId: Int, term: Long): VoteResponse {
         val request = VoteRequest.newBuilder()
                 .setTerm(term)
-                .setCandidateID(candidateId)
+                .setCandidateId(candidateId)
                 .build()
 
         val response = suspendCoroutine<VoteResponse> {

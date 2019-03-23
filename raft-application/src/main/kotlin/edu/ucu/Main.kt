@@ -16,15 +16,15 @@ object Main {
         logger.info { ">>>>> Starting RAFT" }
 
         val clock = TermClock(5000)
-        runBlocking { clock.start()}
         val cluster = Cluster().apply {
             Configuration.nodes
                     .map { (host, port) -> ClusterNode(host, port) }
                     .forEach { add(it) }
         }
         logger.info { "Cluster nodes: ${Configuration.nodes}" }
-        val consensus = Consensus(clock, cluster)
-//        clock.start()
+        val consensus = Raft(clock, cluster)
+
+        runBlocking { clock.start()}
 
         val server = ServerBuilder.forPort(Configuration.port).addService(ClusterNodeService(consensus)).build()
         server.start()

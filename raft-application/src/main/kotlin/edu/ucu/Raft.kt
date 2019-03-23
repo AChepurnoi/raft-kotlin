@@ -1,6 +1,8 @@
 package edu.ucu
 
 import edu.ucu.log.Log
+import edu.ucu.proto.AppendRequest
+import edu.ucu.proto.VoteRequest
 import edu.ucu.secondary.Cluster
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -8,7 +10,7 @@ import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import kotlin.concurrent.fixedRateTimer
 
-class Consensus(val clock: TermClock, val cluster: Cluster) {
+class Raft(val clock: TermClock, val cluster: Cluster) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -38,9 +40,7 @@ class Consensus(val clock: TermClock, val cluster: Cluster) {
         } catch (e: Exception) {
             logger.error { "🤬Exception happened" }
         }
-
     }
-
 
     private val clockStateListener = GlobalScope.launch {
         for ((prev, current) in state.updates.openSubscription()) {
@@ -60,17 +60,17 @@ class Consensus(val clock: TermClock, val cluster: Cluster) {
         }
     }
 
-    suspend fun grantVoteTo(candidateId: Int, term: Long): Boolean {
-        actualizeTerm(term)
-        val vote = state.tryVote(candidateId, term)
-        logger.info { "🗽Vote requested by: ${candidateId}. Voted: $vote" }
+    suspend fun grantVoteTo(request: VoteRequest): Boolean {
+        actualizeTerm(request.term)
+        val vote = state.tryVote(request)
+        logger.info { "🗽Vote request: ${request.candidateId} - term  ${request.term}" }
         return vote
 
     }
 
-    suspend fun validateLeaderMessage(leaderId: Int, term: Long): Boolean {
-        actualizeTerm(term)
-        val result = state.appendLeaderHeartbeat(leaderId, term)
+    suspend fun validateLeaderMessage(request: AppendRequest): Boolean {
+        actualizeTerm(request.term)
+        val result = state.appendLeaderHeartbeat(request)
         if (result) {
             clock.reset()
         }

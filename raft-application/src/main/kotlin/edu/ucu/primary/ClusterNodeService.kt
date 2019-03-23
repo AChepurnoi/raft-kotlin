@@ -1,21 +1,21 @@
 package edu.ucu.primary
 
-import edu.ucu.Consensus
+import edu.ucu.Raft
 import edu.ucu.proto.*
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 
 
-class ClusterNodeService(val consensus: Consensus) : ClusterNodeGrpc.ClusterNodeImplBase() {
+class ClusterNodeService(val raft: Raft) : ClusterNodeGrpc.ClusterNodeImplBase() {
 
     private val logger = KotlinLogging.logger {}
 
     override fun requestVote(request: VoteRequest, responseObserver: StreamObserver<VoteResponse>) {
 
-        val result = runBlocking { consensus.grantVoteTo(request.candidateID, request.term) }
+        val result = runBlocking { raft.grantVoteTo(request) }
 //        logger.info { "Vote request: $result" }
-        val response = VoteResponse.newBuilder().setVoteGranted(result).setTerm(consensus.state.term).build()
+        val response = VoteResponse.newBuilder().setVoteGranted(result).setTerm(raft.state.term).build()
         responseObserver.onNext(response)
         responseObserver.onCompleted()
     }
@@ -24,7 +24,7 @@ class ClusterNodeService(val consensus: Consensus) : ClusterNodeGrpc.ClusterNode
     override fun appendEntries(request: AppendRequest, responseObserver: StreamObserver<AppendResponse>) {
 //        logger.info { "🔨 Append Request: Leader: ${request.leaderId} Term ${request.term}" }
         runBlocking {
-            consensus.validateLeaderMessage(request.leaderId, request.term)
+            raft.validateLeaderMessage(request)
         }
         responseObserver.onNext(AppendResponse.getDefaultInstance())
         responseObserver.onCompleted()

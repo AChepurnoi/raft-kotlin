@@ -1,5 +1,6 @@
 package edu.ucu
 
+import edu.ucu.proto.VoteRequest
 import edu.ucu.secondary.Cluster
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.delay
@@ -10,11 +11,10 @@ import org.junit.runner.RunWith
 import org.junit.runners.BlockJUnit4ClassRunner
 import org.mockito.ArgumentMatchers
 import org.mockito.BDDMockito.*
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
 
 @RunWith(BlockJUnit4ClassRunner::class)
-class ConsensusTest {
+class RaftTest {
 
 
     val channelMock = ConflatedBroadcastChannel<Long>()
@@ -25,7 +25,7 @@ class ConsensusTest {
     }
     val cluster = mock(Cluster::class.java)
 
-    val consensus = Consensus(clock, cluster)
+    val consensus = Raft(clock, cluster)
 
 
     @Test
@@ -65,7 +65,9 @@ class ConsensusTest {
     @Test
     fun nodeCanVoteForCandidate() {
         assertThat(consensus.state.current).isEqualTo(NodeState.FOLLOWER)
-        val result = runBlocking { consensus.grantVoteTo(10, consensus.state.term)}
+        val request = VoteRequest.newBuilder().setCandidateId(10).setTerm(consensus.state.term).build()
+
+        val result = runBlocking { consensus.grantVoteTo(request)}
         assertThat(result).isEqualTo(true)
         assertThat(consensus.state.votedFor).isEqualTo(10L)
     }
@@ -74,7 +76,8 @@ class ConsensusTest {
     fun voteForLowerTermIsNotGranted() {
         assertThat(consensus.state.votedFor).isEqualTo(null)
         assertThat(consensus.state.current).isEqualTo(NodeState.FOLLOWER)
-        val result = runBlocking { consensus.grantVoteTo(10, consensus.state.term - 1)}
+        val request = VoteRequest.newBuilder().setCandidateId(10).setTerm(consensus.state.term - 1).build()
+        val result = runBlocking { consensus.grantVoteTo(request)}
         assertThat(result).isEqualTo(false)
         assertThat(consensus.state.votedFor).isEqualTo(null)
     }
@@ -84,12 +87,16 @@ class ConsensusTest {
         assertThat(consensus.state.votedFor).isEqualTo(null)
         assertThat(consensus.state.current).isEqualTo(NodeState.FOLLOWER)
 
-        val result = runBlocking { consensus.grantVoteTo(10, consensus.state.term)}
+        val request = VoteRequest.newBuilder().setCandidateId(10).setTerm(consensus.state.term ).build()
+
+        val result = runBlocking { consensus.grantVoteTo(request)}
 
         assertThat(result).isEqualTo(true)
         assertThat(consensus.state.votedFor).isEqualTo(10L)
 
-        val resultTwo = runBlocking { consensus.grantVoteTo(1, consensus.state.term)}
+        val requestTwo = VoteRequest.newBuilder().setCandidateId(1).setTerm(consensus.state.term ).build()
+
+        val resultTwo = runBlocking { consensus.grantVoteTo(requestTwo)}
 
         assertThat(resultTwo).isEqualTo(false)
         assertThat(consensus.state.votedFor).isEqualTo(10)
