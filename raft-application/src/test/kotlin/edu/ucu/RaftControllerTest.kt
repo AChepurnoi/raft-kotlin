@@ -65,7 +65,7 @@ class RaftControllerTest {
         val request = VoteRequest.newBuilder().setCandidateId(10).setTerm(consensus.state.term).build()
 
         val result = runBlocking { consensus.requestVote(request)}
-        assertThat(result).isEqualTo(true)
+        assertThat(result.voteGranted).isEqualTo(true)
         assertThat(consensus.state.votedFor).isEqualTo(10L)
     }
 
@@ -75,7 +75,7 @@ class RaftControllerTest {
         assertThat(consensus.state.current).isEqualTo(NodeState.FOLLOWER)
         val request = VoteRequest.newBuilder().setCandidateId(10).setTerm(consensus.state.term - 1).build()
         val result = runBlocking { consensus.requestVote(request)}
-        assertThat(result).isEqualTo(false)
+        assertThat(result.voteGranted).isEqualTo(false)
         assertThat(consensus.state.votedFor).isEqualTo(null)
     }
 
@@ -88,14 +88,14 @@ class RaftControllerTest {
 
         val result = runBlocking { consensus.requestVote(request)}
 
-        assertThat(result).isEqualTo(true)
+        assertThat(result.voteGranted).isEqualTo(true)
         assertThat(consensus.state.votedFor).isEqualTo(10L)
 
         val requestTwo = VoteRequest.newBuilder().setCandidateId(1).setTerm(consensus.state.term ).build()
 
         val resultTwo = runBlocking { consensus.requestVote(requestTwo)}
 
-        assertThat(resultTwo).isEqualTo(false)
+        assertThat(resultTwo.voteGranted).isEqualTo(false)
         assertThat(consensus.state.votedFor).isEqualTo(10)
     }
 

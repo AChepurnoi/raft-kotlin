@@ -18,7 +18,7 @@ class State(val id: Int = Configuration.id,
             term: Long = 0) : ClusterNode {
 
     override var nextIndex: Int = log.lastIndex() + 1
-    override var matchIndex: Int = 0
+    override var matchIndex: Int = -1
 
     private val logger = KotlinLogging.logger {}
     val updates = ConflatedBroadcastChannel<Pair<NodeState, NodeState>>()
@@ -107,11 +107,6 @@ class State(val id: Int = Configuration.id,
             updateState(NodeState.FOLLOWER)
         }
 
-//        if (request.prevLogIndex == -1 && log.isNotEmpty()) {
-//            logger.warn { "Log is not empty but master states it's empty" }
-//            return false
-//        }
-
         if (request.prevLogIndex != -1) {
             val logValid = log[request.prevLogIndex]?.run { this.term == request.prevLogTerm } ?: false
             if (!logValid) {
@@ -143,8 +138,10 @@ class State(val id: Int = Configuration.id,
         return "State[id=$id, term=$term, current=$current, leaderId=$leaderId, votedFor=$votedFor, log=$log]"
     }
 
-    fun applyCommand(command: Command) {
-        log.append(LogEntry.newBuilder().setTerm(term).setCommandBytes(command.toBytes()).build())
+    suspend fun applyCommand(command: Command): Boolean {
+        val index = log.append(LogEntry.newBuilder().setTerm(term).setCommandBytes(command.toBytes()).build())
+        wait { index >= log.commitIndex }
+        return true
     }
 
 }

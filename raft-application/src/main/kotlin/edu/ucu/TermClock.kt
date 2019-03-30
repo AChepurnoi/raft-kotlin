@@ -29,7 +29,6 @@ class TermClock(private val interval: Long) {
         channel.send(term)
     }
 
-
     suspend fun start() {
         mutex.withLock(stopped) {
             if (stopped) {

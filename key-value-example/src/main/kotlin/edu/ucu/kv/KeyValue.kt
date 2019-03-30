@@ -29,8 +29,8 @@ object KeyValue {
                 post("/{key}") {
                     val key = call.parameters["key"]!!
                     val data = call.receiveText()
-                    node.applyCommand(Set(key, data.toByteArray()))
-                    call.respondText("done")
+                    val result = node.applyCommand(Set(key, data.toByteArray()))
+                    call.respondText("Result: $result")
                 }
             }
         }.start(true)

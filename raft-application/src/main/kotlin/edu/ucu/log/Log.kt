@@ -27,8 +27,10 @@ class Log {
                 }
     }
 
-    fun append(value: LogEntry) {
+    fun append(value: LogEntry): Int {
+        val targetIndex = entries.size
         entries.add(value)
+        return targetIndex
     }
 
     fun commit(index: Int): Boolean {

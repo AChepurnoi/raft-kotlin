@@ -20,11 +20,11 @@ class RaftNode {
         return controller.state.log.state()
     }
 
-    fun applyCommand(command: Command){
-        controller.applyCommand(command)
+    suspend fun applyCommand(command: Command): Boolean {
+        return controller.applyCommand(command)
     }
 
-    fun await(){
+    fun await() {
         server.awaitTermination()
     }
 

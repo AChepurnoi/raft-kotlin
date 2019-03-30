@@ -91,7 +91,7 @@ class RaftController(val cluster: List<GrpcClusterNode>) : RaftHandler {
     //    ####### GRPC Handlers #######
     //    #############################
 
-    override suspend fun requestVote(request: VoteRequest): VoteResponse? {
+    override suspend fun requestVote(request: VoteRequest): VoteResponse {
         actualizeTerm(request.term)
         val vote = state.requestVote(request)
         if (vote.voteGranted) {
@@ -101,7 +101,7 @@ class RaftController(val cluster: List<GrpcClusterNode>) : RaftHandler {
         return vote
     }
 
-    override suspend fun appendEntries(request: AppendRequest): AppendResponse? {
+    override suspend fun appendEntries(request: AppendRequest): AppendResponse {
         actualizeTerm(request.term)
         val result = state.appendEntries(request)
         if (result.success) {
@@ -118,8 +118,8 @@ class RaftController(val cluster: List<GrpcClusterNode>) : RaftHandler {
         }
     }
 
-    fun applyCommand(command: Command) {
-        state.applyCommand(command)
+    suspend fun applyCommand(command: Command):Boolean {
+        return state.applyCommand(command)
     }
 
 }
