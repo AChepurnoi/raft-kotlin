@@ -1,10 +1,8 @@
 package edu.ucu
 
 import edu.ucu.primary.ClusterNodeService
-import edu.ucu.secondary.Cluster
-import edu.ucu.secondary.ClusterNode
+import edu.ucu.secondary.GrpcClusterNode
 import io.grpc.ServerBuilder
-import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 
 object Main {
@@ -14,22 +12,9 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         logger.info { ">>>>> Starting RAFT" }
-
-        val clock = TermClock(5000)
-        val cluster = Cluster().apply {
-            Configuration.nodes
-                    .map { (host, port) -> ClusterNode(host, port) }
-                    .forEach { add(it) }
-        }
         logger.info { "Cluster nodes: ${Configuration.nodes}" }
-        val consensus = Raft(clock, cluster)
-
-        runBlocking { clock.start()}
-
-        val server = ServerBuilder.forPort(Configuration.port).addService(ClusterNodeService(consensus)).build()
-        server.start()
-
-        server.awaitTermination()
+        val consensus = RaftNode()
+        consensus.await()
         logger.info { ">>>>> Stopping RAFT" }
 
     }

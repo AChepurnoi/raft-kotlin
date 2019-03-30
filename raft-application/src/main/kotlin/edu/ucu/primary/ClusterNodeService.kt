@@ -1,32 +1,31 @@
 package edu.ucu.primary
 
-import edu.ucu.Raft
 import edu.ucu.proto.*
+import edu.ucu.secondary.RaftHandler
 import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 
 
-class ClusterNodeService(val raft: Raft) : ClusterNodeGrpc.ClusterNodeImplBase() {
+class ClusterNodeService(val raft: RaftHandler) : ClusterNodeGrpc.ClusterNodeImplBase() {
 
     private val logger = KotlinLogging.logger {}
 
     override fun requestVote(request: VoteRequest, responseObserver: StreamObserver<VoteResponse>) {
 
-        val result = runBlocking { raft.grantVoteTo(request) }
+        val result = runBlocking { raft.requestVote(request) }
 //        logger.info { "Vote request: $result" }
-        val response = VoteResponse.newBuilder().setVoteGranted(result).setTerm(raft.state.term).build()
-        responseObserver.onNext(response)
+        responseObserver.onNext(result)
         responseObserver.onCompleted()
     }
 
 
     override fun appendEntries(request: AppendRequest, responseObserver: StreamObserver<AppendResponse>) {
 //        logger.info { "🔨 Append Request: Leader: ${request.leaderId} Term ${request.term}" }
-        runBlocking {
-            raft.validateLeaderMessage(request)
+        val result = runBlocking {
+            raft.appendEntries(request)
         }
-        responseObserver.onNext(AppendResponse.getDefaultInstance())
+        responseObserver.onNext(result)
         responseObserver.onCompleted()
     }
 }

@@ -14,6 +14,8 @@ service ClusterNode {
 message VoteRequest {
     int64 term = 1;
     int32 candidateId = 2;
+    int32 lastLogIndex = 3;
+    int64 lastLogTerm = 4;
 
 }
 
@@ -25,7 +27,19 @@ message VoteResponse {
 message AppendRequest{
     int64 term = 1;
     int32 leaderId = 2;
+    int32 prevLogIndex = 3;
+    int64 prevLogTerm = 4;
+    int32 leaderCommit = 5;
+    repeated LogEntry entries = 6;
 
+
+}
+
+message LogEntry {
+//    uint64 index=1;
+    uint64 term=2;
+    string command=3;
+    bytes data=4;
 }
 
 message AppendResponse{

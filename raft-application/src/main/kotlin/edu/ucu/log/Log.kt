@@ -1,35 +1,67 @@
 package edu.ucu.log
 
-import java.util.*
+import edu.ucu.proto.LogEntry
+import kotlin.collections.ArrayList
+import kotlin.math.min
 
 
-class Log(currentTerm: Long = 0,
-          private val committed: Queue<Command> = LinkedList(),
-          private val pending: Queue<Command> = LinkedList()) {
+class Log {
 
-    var currentTerm: Long = currentTerm
+    @Volatile
+    private var entries: MutableList<LogEntry> = ArrayList()
+
+    var commitIndex: Int = -1
         private set
 
+    fun lastIndex() = entries.size - 1
+
+    fun lastTerm(): Long? = entries.lastOrNull()?.term
+
+    fun isNotEmpty(): Boolean = entries.isNotEmpty()
 
 
-    var logState: LogState
-        private set(value) = throw RuntimeException("Can't set")
-        get() = committed.fold(LogState(data = emptyMap())) { cState, command -> command.update(cState) }
+    fun state(): LogState {
+        return entries.take(commitIndex + 1)
+                .fold(LogState()) { state: LogState, entry: LogEntry ->
+                    Command.fromBytes(entry.commandBytes.toByteArray()).update(state)
+                }
+    }
 
+    fun append(value: LogEntry) {
+        entries.add(value)
+    }
 
-    fun nextTerm(): Log = this.apply { currentTerm += 1 }
+    fun commit(index: Int): Boolean {
+        val idx = min(lastIndex(), index)
+        commitIndex = idx
+        return true
+    }
 
-    fun append(c: Command): Log = this.apply { pending.add(c) }
+    fun starting(index: Int): List<LogEntry> {
+        return entries.filterIndexed { i, _ -> i >= index }
+    }
 
-    fun commit(logState: LogState): LogState {
+    operator fun get(prevLogIndex: Int) = entries.getOrNull(prevLogIndex)
 
-        var resultState = logState
-        for (command in pending) {
-            resultState = command.update(resultState)
-            committed.add(command)
+    operator fun set(idx: Int, value: LogEntry) {
+        if (idx == entries.size) {
+            entries.add(value)
+        } else {
+            entries[idx] = value
         }
-        pending.clear()
-        return resultState
+    }
+
+    fun prune(startIndex: Int) {
+
+        val drop = entries.size - startIndex
+        entries = entries.dropLast(drop).toMutableList()
+
+    }
+
+    override fun toString(): String {
+        val commited = (0..commitIndex).map { "■" }.joinToString(separator = "")
+        val uncommited = ((commitIndex + 1)..lastIndex()).map { "□" }.joinToString(separator = "")
+        return "[${commited + uncommited}](${commitIndex + 1}/${entries.size})"
     }
 
 

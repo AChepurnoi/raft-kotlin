@@ -9,8 +9,17 @@ pluginManagement {
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
+
+        maven {
+            url 'http://dl.bintray.com/kotlin/kotlin-eap'
+        }
+
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
     }
 }
 rootProject.name = 'raft-kt'
 include 'raft-application'
+include 'key-value-example'
 

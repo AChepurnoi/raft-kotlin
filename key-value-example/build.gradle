@@ -1,0 +1,17 @@
+plugins {
+    id 'idea'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+
+}
+
+
+dependencies {
+    implementation project(":raft-application")
+    implementation "io.ktor:ktor-server-netty:1.1.3"
+
+}
