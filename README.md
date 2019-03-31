@@ -1,4 +1,4 @@
-# RAFT 
+# raft-kotlin 
 
 [![Build Status](https://travis-ci.com/AChepurnoi/raft-kotlin.svg?token=dFANEVvUn3HF3pZ9jc1Z&branch=master)](https://travis-ci.com/AChepurnoi/raft-kotlin)
 [![codecov](https://codecov.io/gh/AChepurnoi/raft-kotlin/branch/master/graph/badge.svg?token=CLFO7pW9FP)](https://codecov.io/gh/AChepurnoi/raft-kotlin)
