@@ -1,3 +1,21 @@
 language: java
 jdk:
 - oraclejdk8
+
+env:
+  global:
+  - secure: "de5pWDR/apqjFr1xbVP0m1SrQB2DiRl0LFGmxkP7j9cXyWpR51RzssqkDwL6gLqJ13+t1Hc0TgRInLA4RFD0GLTzINosQu7PeORncT7v0ihNqwXzLxhDBVAX50+zHGw386lc+DhfyLarkZ2cV12lDVzfr90h5zBQIitGDPCPChlfTKTj20fJmxGTk56h2Sj9WTr0Gpc/NIbZDfoDnlckgXNhN4p9sgDxJWLcSoKB7KUQHWQE2Gf0G93OieG3gsoKfAWydumsm3wj463w4NZ/jeeW3mO+rbzk2eP2FQwb8MOLOYJVWFZ3ExCNQmsu+kxj08KZZ1igptHpF+VBXBv0ZjQiGbWqAKpk0GSLd70nlfVgQXQTzSY6VoY4aQtOY6CJHKMqqovHNj/Y8O3KSd0VRHm07s7w/eXx3UI+nFJM7uwFEwe3Se73zvi2AH0OM6arleBlDXv3b5mdq+033opjtKvITPv0eznKEW6ISEKQS5vxvgzbzyE4F8bjzLJHkRrAfqxJSPkCNJU6ueA7qaOA2qkNXFngjnQyEgGw+/batrkqWG4D6LOfKqertnkqno2Gn7mfapgkmTzdpOTtt1enW2GPofqq4g61pNLt5Rm+/pkPNdERG685DtdVtz/7sMfQshayIh26sGb6m9MEWs//1cPvHK/yMo/CeLi3t25giz4="
+
+
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+
+script:
+- "./gradlew check"
+- "./gradlew codeCoverageReport"
+
+
+after_success:
+- "bash <(curl -s https://codecov.io/bash)"

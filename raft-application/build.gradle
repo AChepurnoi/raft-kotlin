@@ -45,3 +45,36 @@ protobuf {
         all()*.plugins { grpc {} }
     }
 }
+//
+//task codeCoverageReport(type: JacocoReport) {
+//
+//
+//    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+//    subprojects.each {
+//        sourceSets it.sourceSets.main
+//    }
+//    reports {
+//        xml.enabled true
+//        html.enabled false
+//        csv.enabled false
+//        xml.destination "${buildDir}/reports/jacoco/report.xml"
+//
+//    }
+////    afterEvaluate {
+//////        Filter whitelisted packages
+////        classDirectories = files(classDirectories.files.collect {
+////            fileTree(dir: it).filter { file ->
+////                !['grpc',
+////                 'config']
+////                        .stream()
+////                        .map { file.path.contains(it) }
+////                        .any()
+////            }
+////        })
+////    }
+//}
+//
+//// always run the tests before generating the report
+//codeCoverageReport.dependsOn {
+//    subprojects*.test
+//}

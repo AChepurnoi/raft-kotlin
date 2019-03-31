@@ -1,6 +1,8 @@
 buildscript {
     ext.kotlin_version = '1.3.20'
-    repositories { mavenCentral()
+    repositories {
+        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -10,8 +12,8 @@ buildscript {
 
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.3.20' apply false
+    id 'jacoco'
 }
-
 
 repositories {
     mavenCentral()
@@ -52,4 +54,42 @@ subprojects {
         kotlinOptions.freeCompilerArgs = ["-Xallow-result-return-type", "-Xuse-experimental=kotlin.Experimental"]
     }
 
+}
+
+
+task codeCoverageReport(type: JacocoReport) {
+
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+    // Add all relevant sourcesets from the subprojects
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
+    reports {
+        xml.enabled true
+        html.enabled true
+        html.destination "${buildDir}/reports/jacoco"
+        csv.enabled false
+        xml.destination "${buildDir}/reports/jacoco/report.xml"
+
+    }
+
+    afterEvaluate {
+//        Filter whitelisted packages
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it).filter { file ->
+                !['grpc',
+                  'example',
+                  'config']
+                        .stream()
+                        .map { file.path.contains(it) }
+                        .any()
+            }
+        })
+    }
+}
+
+// always run the tests before generating the report
+codeCoverageReport.dependsOn {
+    subprojects*.test
 }
