@@ -11,7 +11,18 @@ repositories {
 
 
 dependencies {
-    implementation project(":raft-application")
+    implementation project(":raft")
     implementation "io.ktor:ktor-server-netty:1.1.3"
 
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'edu.ucu.example.KeyValue'
+    }
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }

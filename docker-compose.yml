@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  node_one:
+    image: kvex:latest
+    container_name: node_one
+    environment:
+      ID: "50"
+      PORT: "4000"
+      NODES: "51:node_two:4000,52:node_three:4000"
+    build:
+      dockerfile: Dockerfile
+      context: .

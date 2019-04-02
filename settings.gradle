@@ -20,6 +20,6 @@ pluginManagement {
     }
 }
 rootProject.name = 'raft-kt'
-include 'raft-application'
+include 'raft'
 include 'key-value-example'
 
