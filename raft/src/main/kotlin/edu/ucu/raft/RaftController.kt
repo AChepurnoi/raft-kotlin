@@ -18,6 +18,7 @@ import kotlinx.coroutines.sync.withLock
 import mu.KotlinLogging
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
+import kotlin.math.log
 
 
 class RaftController(val config: RaftConfiguration,
@@ -65,9 +66,13 @@ class RaftController(val config: RaftConfiguration,
     private fun prepareHeartbeatTimer() {
         heartbeatTimer = fixedRateTimer("heartbeat", initialDelay = config.heartbeatInterval, period = config.heartbeatInterval) {
             runBlocking {
-                stateLock.withLock {
-                    heartbeat.send()
-                    commit.perform()
+                kotlin.runCatching {
+                    stateLock.withLock {
+                        heartbeat.send()
+                        commit.perform()
+                    }
+                }.onFailure {
+                    logger.error { "Failure: $it" }
                 }
             }
         }
