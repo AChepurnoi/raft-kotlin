@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.com/AChepurnoi/raft-kotlin.svg?token=dFANEVvUn3HF3pZ9jc1Z&branch=master)](https://travis-ci.com/AChepurnoi/raft-kotlin)
 [![codecov](https://codecov.io/gh/AChepurnoi/raft-kotlin/branch/master/graph/badge.svg?token=CLFO7pW9FP)](https://codecov.io/gh/AChepurnoi/raft-kotlin)
-
-<img align="right" width="250" height="250" src="https://raft.github.io/logo/annie-solo.png">
+<img align="right" width="200" height="200" src="https://raft.github.io/logo/annie-solo.png">
 
 Kotlin implementation of raft consensus algorithm 
 
