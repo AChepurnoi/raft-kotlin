@@ -8,7 +8,7 @@ Kotlin implementation of raft consensus algorithm
 
 Raft is a consensus algorithm that is designed to be easy to understand. It's equivalent to Paxos in fault-tolerance and performance
 
-## 🗄Project structure
+## 🗄 Project structure
 ### ◎ key-value-example
 Example of how raft module can be used to 
 implement distributed key-value storage.
@@ -22,7 +22,7 @@ Exposes `RaftNode` class for clients to create a cluster node,
 actions to mutate state of the cluster 
 and method to fetch current state.
 
-## 🔨Raft Implementation
+## 🔨 Raft Implementation
 Components:
 * State 
 * Log
@@ -31,12 +31,21 @@ Components:
 * Actions
 * Raft Controller
 
-## ⚙️Testing
+## ⚙️ Testing
 * Unit tests - `actions`, `clock`, `log`, `state` and `RaftController` classes are tested 
 * Integration tests - `RaftClusterTesting` class contains different test cases for living cluster (With `LocalRaftNode` instead of `GrpcClusterNode`)
 * Key-Value container testing - kv cluster testing - `Not implemented yet`
 
-## 🔗References
+
+## ⛳️ Points to improve
+*This is not production ready implementaton and most likely there are some amount of hidden bugs*
+
+* Refactoring
+* Revisit `@Volatile` and Mutex usages
+* Implement persistent log storage
+* Implement snapshoting
+
+## 🔗 References
 
 [Instructors-guide-to-raft](https://thesquareplanet.com/blog/instructors-guide-to-raft/)
 
@@ -45,11 +54,3 @@ Components:
 [Raft visualization](http://thesecretlivesofdata.com/raft/)
 
 [Raft resources](https://raft.github.io/)
-
-## ⛳️Points to improve
-*This is not production ready implementaton and most likely there are some amount of hidden bugs*
-
-* Refactoring
-* Revisit `@Volatile` and Mutex usages
-* Implement persistent log storage
-* Implement snapshoting
