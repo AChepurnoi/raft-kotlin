@@ -36,7 +36,6 @@ message AppendRequest{
 }
 
 message LogEntry {
-//    uint64 index=1;
     uint64 term=2;
     string command=3;
     bytes data=4;
