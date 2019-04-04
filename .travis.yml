@@ -13,9 +13,8 @@ cache:
   - "$HOME/.gradle/wrapper/"
 
 script:
-- "./gradlew check"
+- "./gradlew test"
 - "./gradlew codeCoverageReport"
-
 
 after_success:
 - "bash <(curl -s https://codecov.io/bash)"

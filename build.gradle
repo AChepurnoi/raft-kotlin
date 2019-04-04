@@ -26,6 +26,7 @@ subprojects {
 
     apply plugin: "java"
     apply plugin: "kotlin"
+    apply plugin: "jacoco"
     group 'ucu'
     version '1'
 
@@ -56,6 +57,9 @@ subprojects {
 
 }
 
+jacoco {
+    toolVersion = "0.8.3"
+}
 
 task codeCoverageReport(type: JacocoReport) {
 
@@ -88,6 +92,7 @@ task codeCoverageReport(type: JacocoReport) {
         })
     }
 }
+
 
 // always run the tests before generating the report
 codeCoverageReport.dependsOn {
