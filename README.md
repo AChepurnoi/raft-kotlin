@@ -9,14 +9,14 @@ Kotlin implementation of raft consensus algorithm
 Raft is a consensus algorithm that is designed to be easy to understand. It's equivalent to Paxos in fault-tolerance and performance
 
 ## 🗄 Project structure
-### ◎ key-value-example
+### key-value-example
 Example of how raft module can be used to 
 implement distributed key-value storage.
 Current implementation exposes two endpoints:
 * POST /{key} - Sets `key={request_body}`
 * GET /{key} - Returns value of the `key` or `Nil` if key does not exist
 
-### ◎ raft
+### raft
 Raft implementation. 
 Exposes `RaftNode` class for clients to create a cluster node, 
 actions to mutate state of the cluster 
