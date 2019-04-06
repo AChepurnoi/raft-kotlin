@@ -44,6 +44,10 @@ This require you to be able to resolve the IP from configuration (You should int
 
 Another option is to run jar files locally with proper env configuration
  
+To read node list from env, raft env configuration uses the following notation:
+```
+NODES=[ID]:[HOST]:[PORT],[ID]:[HOST]:[PORT]...
+```
 
 ## 🗄 Project structure
 ### key-value-example
@@ -64,9 +68,9 @@ and method to fetch current state.
 
 ## 🔨 Raft Implementation
 Components:
-* State 
+* State
 * Log
-* GRPC Client/Server
+* gRPC Client/Server
 * Clock
 * Actions
 * Raft Controller
