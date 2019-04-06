@@ -7,7 +7,7 @@
 Kotlin implementation of raft consensus algorithm 
 
 Raft is a consensus algorithm that is designed to be easy to understand. It's equivalent to Paxos in fault-tolerance and performance
-## How to run
+## 👨‍💻 How to run
 #### Building
 ```
 #Cloning repository
