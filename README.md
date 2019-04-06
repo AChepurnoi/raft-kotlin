@@ -78,7 +78,7 @@ Components:
 
 
 ## ⛳️ Points to improve
-*This is not production ready implementaton and most likely there are some amount of hidden bugs*
+*This is not production ready implementaton and very likely there are bugs*
 
 * Refactoring
 * Revisit `@Volatile` and Mutex usages
