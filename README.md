@@ -4,9 +4,9 @@
 [![codecov](https://codecov.io/gh/AChepurnoi/raft-kotlin/branch/master/graph/badge.svg?token=CLFO7pW9FP)](https://codecov.io/gh/AChepurnoi/raft-kotlin)
 <img align="right" width="200" height="200" src="https://raft.github.io/logo/annie-solo.png">
 
-Kotlin implementation of raft consensus algorithm 
+Kotlin implementation of the raft consensus algorithm 
 
-Raft is a consensus algorithm that is designed to be easy to understand. It's equivalent to Paxos in fault-tolerance and performance
+A raft is a consensus algorithm that is designed to be easy to understand. It's equivalent to Paxos in fault-tolerance and performance
 
 **Repository provides an example implementation and 
 show-case usage with in-memory key-value storage**
@@ -42,9 +42,9 @@ docker run --rm --net=raft-kt_default hortonworks/alpine-curl:3.1 curl --request
 
 #### Other
 
-Key-value implementation uses `307 Redirect` to redirect requests from slaves to master. 
+The key-value implementation uses `307 Redirect` to redirect requests from slaves to the master. 
 
-This require you to be able to resolve the IP from configuration (You should interact with HTTP server only from docker network e.g. you container)
+This requires you to be able to resolve the IP from configuration (You should interact with HTTP server only from docker network e.g. you container)
 
 Another option is to run jar files locally with proper env configuration
  
@@ -63,7 +63,7 @@ Current implementation exposes two endpoints:
 # Set `key={request_body}
 POST HOST/{key} 
 
-#Returns value of the `key` or `Nil` if key does not exist
+#Returns the value of the `key` or `Nil` if the key does not exist
 GET HOST/{key}
 ```
 
@@ -73,8 +73,8 @@ Key-value HTTP server uses `8000` port by default
 ## 🔨 Raft Implementation
 
 Exposes `RaftNode` class for clients to create a cluster node, 
-actions to mutate state of the cluster 
-and method to fetch current state.
+actions to mutate the state of the cluster 
+and method to fetch the current state.
 
 
 Components:
@@ -92,12 +92,12 @@ Components:
 
 
 ## ⛳️ Points to improve
-*This is not production ready implementaton and very likely there are bugs*
+*This is not production ready implementation and very likely there are bugs*
 
 * Refactoring
 * Revisit `@Volatile` and Mutex usages
 * Implement persistent log storage
-* Implement snapshoting
+* Implement snapshotting
 
 ## 🔗 References
 
