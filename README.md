@@ -53,24 +53,30 @@ To read node list from env, raft env configuration uses the following notation:
 NODES=[ID]:[HOST]:[PORT],[ID]:[HOST]:[PORT]...
 ```
 
-## 🗄 Project structure
-### key-value-example
-Example of how raft module can be used to 
-implement distributed key-value storage.
+
+## 🔑 Example App (key-value storage) Implementation
+Shows the example of how raft module can be used to 
+implement distributed in-memory key-value storage.
 
 Current implementation exposes two endpoints:
-* POST /{key} - Sets `key={request_body}`
-* GET /{key} - Returns value of the `key` or `Nil` if key does not exist
+```
+# Set `key={request_body}
+POST HOST/{key} 
+
+#Returns value of the `key` or `Nil` if key does not exist
+GET HOST/{key} - 
+```
+
 
 Key-value HTTP server uses `8000` port by default
 
-### raft
-Raft implementation. 
+## 🔨 Raft Implementation
+
 Exposes `RaftNode` class for clients to create a cluster node, 
 actions to mutate state of the cluster 
 and method to fetch current state.
 
-## 🔨 Raft Implementation
+
 Components:
 * State
 * Log
