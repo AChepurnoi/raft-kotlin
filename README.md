@@ -64,7 +64,7 @@ Current implementation exposes two endpoints:
 POST HOST/{key} 
 
 #Returns value of the `key` or `Nil` if key does not exist
-GET HOST/{key} - 
+GET HOST/{key}
 ```
 
 
