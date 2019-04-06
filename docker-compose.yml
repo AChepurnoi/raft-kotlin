@@ -7,7 +7,49 @@ services:
     environment:
       ID: "50"
       PORT: "4000"
-      NODES: "51:node_two:4000,52:node_three:4000"
+      NODES: "51:172.20.0.6:4000,52:172.20.0.7:4000"
+      TIMER: "1000"
     build:
       dockerfile: Dockerfile
       context: .
+    networks:
+      default:
+        ipv4_address: 172.20.0.5
+
+  node_two:
+    image: kvex:latest
+    container_name: node_two
+    environment:
+      ID: "51"
+      PORT: "4000"
+      NODES: "50:172.20.0.5:4000,52:172.20.0.7:4000"
+      TIMER: "950"
+    build:
+      dockerfile: Dockerfile
+      context: .
+    networks:
+      default:
+        ipv4_address: 172.20.0.6
+
+  node_three:
+    image: kvex:latest
+    container_name: node_three
+    environment:
+      ID: "52"
+      PORT: "4000"
+      NODES: "50:172.20.0.5:4000,51:172.20.0.6:4000"
+      TIMER: "1050"
+    build:
+      dockerfile: Dockerfile
+      context: .
+    networks:
+      default:
+        ipv4_address: 172.20.0.7
+
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.20.0.0/24

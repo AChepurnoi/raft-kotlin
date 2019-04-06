@@ -34,9 +34,9 @@ class EnvConfiguration : RaftConfiguration {
 
     override val id = env.getOrDefault("ID", (Math.random() * 100).toInt().toString()).toInt()
 
-    override val timerInterval: Long = 5000
+    override val timerInterval: Long = env.getOrDefault("TIMER", "500").toLong()
 
-    override val heartbeatInterval: Long = 1000
+    override val heartbeatInterval: Long = env.getOrDefault("HEARTBEAT_TIMER", "50").toLong()
 
 
 }

@@ -7,14 +7,54 @@
 Kotlin implementation of raft consensus algorithm 
 
 Raft is a consensus algorithm that is designed to be easy to understand. It's equivalent to Paxos in fault-tolerance and performance
+## How to run
+#### Building
+```
+#Cloning repository
+git clone https://github.com/AChepurnoi/raft-kotlin.git
+
+#Building jar file
+./gradlew jar
+```
+
+
+#### Running docker environment
+```
+docker-compose up --build
+```
+
+To interact with cluster you can use cURL:
+
+```
+#Set test=hello
+docker run --rm --net=raft-kt_default hortonworks/alpine-curl:3.1 curl --request POST --url node_one:8000/test --data 'hello' ; echo
+```
+
+
+```
+#Read test value
+docker run --rm --net=raft-kt_default hortonworks/alpine-curl:3.1 curl --request GET --url node_one:8000/test ; echo
+```
+
+#### Other
+
+Key-value implementation uses `307 Redirect` to redirect requests from slaves to master. 
+
+This require you to be able to resolve the IP from configuration (You should interact with HTTP server only from docker network e.g. you container)
+
+Another option is to run jar files locally with proper env configuration
+ 
 
 ## 🗄 Project structure
 ### key-value-example
 Example of how raft module can be used to 
 implement distributed key-value storage.
+
 Current implementation exposes two endpoints:
 * POST /{key} - Sets `key={request_body}`
 * GET /{key} - Returns value of the `key` or `Nil` if key does not exist
+
+Key-value HTTP server uses `8000` port by default
 
 ### raft
 Raft implementation. 

@@ -32,7 +32,7 @@ class RaftController(val config: RaftConfiguration,
     private val voting = VotingAction(state, cluster)
     private val commit = CommitAction(state, cluster)
     private val clockSubscription = clock.channel.openSubscription()
-    private val stateLock: Mutex = Mutex(false)
+    //    private val stateLock: Mutex = Mutex(false)
     private lateinit var termSubscriber: Job
     private lateinit var heartbeatTimer: Timer
     private lateinit var stateSubscriber: Job
@@ -67,10 +67,10 @@ class RaftController(val config: RaftConfiguration,
         heartbeatTimer = fixedRateTimer("heartbeat", initialDelay = config.heartbeatInterval, period = config.heartbeatInterval) {
             runBlocking {
                 kotlin.runCatching {
-                    stateLock.withLock {
-                        heartbeat.send()
-                        commit.perform()
-                    }
+                    //                    stateLock.withLock {
+                    heartbeat.send()
+                    commit.perform()
+//                    }
                 }.onFailure {
                     logger.error { "Failure: $it" }
                 }
@@ -81,17 +81,16 @@ class RaftController(val config: RaftConfiguration,
     private fun prepareTermIncrementSubscriber() {
         termSubscriber = GlobalScope.launch {
             for (term in clockSubscription) {
-                stateLock.withLock {
-                    state.nextTerm(term)
-                    val result = voting.askVotes()
-                    if (result) {
-                        state.promoteToLeader()
-                    } else {
-                        logger.info { "---> 🤬 Can't promote to leader <---" }
-                    }
+                logger.info { "Starting term increment" }
+                state.nextTerm(term)
+                val result = voting.askVotes()
+                if (result) {
+                    state.promoteToLeader()
+                } else {
+                    logger.info { "---> 🤬 Can't promote to leader <---" }
                 }
-
             }
+
         }
     }
 
@@ -120,33 +119,31 @@ class RaftController(val config: RaftConfiguration,
     }
 
     override suspend fun requestVote(request: VoteRequest): VoteResponse {
-        stateLock.withLock {
-            actualizeTerm(request.term)
-            val vote = state.requestVote(request)
-            if (vote.voteGranted) {
-                clock.reset()
-            }
-            logger.info { "🗽Vote request: ${request.candidateId} - term  ${request.term}" }
-            return vote
+        actualizeTerm(request.term)
+        val vote = state.requestVote(request)
+
+        if (vote.voteGranted) {
+            clock.reset()
         }
+        logger.info { "🗽Vote request: ${request.candidateId} - term  ${request.term} - result: ${vote.voteGranted}" }
+        return vote
 
     }
 
     override suspend fun appendEntries(request: AppendRequest): AppendResponse {
-        stateLock.withLock {
-            actualizeTerm(request.term)
-            val result = state.appendEntries(request)
-            if (result.success) {
-                clock.reset()
-            }
-            logger.info { "💎 Validated leader message. Result ${result.success}" }
-            return result
+        actualizeTerm(request.term)
+        val result = state.appendEntries(request)
+
+        if (result.success) {
+            clock.reset()
         }
+//        logger.info { "💎 Validated leader message. Result ${result.success}" }
+        return result
     }
 
 
     suspend fun applyCommand(command: Command): Boolean {
-        val index = stateLock.withLock { state.applyCommand(command) }
+        val index = state.applyCommand(command)
 
         while (index > state.log.commitIndex) {
             delay(50)
